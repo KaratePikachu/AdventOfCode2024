@@ -7,22 +7,10 @@ public class Code{
         part2();
     }
 
-    public static ArrayList<String> getLines() throws Exception{
-        ArrayList<String> lines = new ArrayList<>();
-        Scanner myReader = new Scanner(new File("input.txt"));
-        while(myReader.hasNextLine()){
-        String nextLine = myReader.nextLine();
-            if(nextLine.trim().isEmpty()){
-                continue;
-            }
-            lines.add(nextLine);
-        }
-
-        return lines;
-    }
+    
 
     public static void part1() throws Exception{
-        ArrayList<String> lines = getLines();
+        ArrayList<String> lines = ReadFile.getLines();
         ArrayList<ArrayList<Integer>> list = new ArrayList<>();
         for(String line : lines){
             ArrayList<Integer> row = new ArrayList<>();
@@ -55,7 +43,7 @@ public class Code{
     }
 
     public static void part2() throws Exception{
-        ArrayList<String> lines = getLines();
+        ArrayList<String> lines = ReadFile.getLines();
         ArrayList<ArrayList<Integer>> list = new ArrayList<>();
         for(String line : lines){
             ArrayList<Integer> row = new ArrayList<>();
