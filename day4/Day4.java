@@ -1,7 +1,7 @@
 import java.util.*;
 import java.io.*;
 
-public class Code{
+public class Day4 {
 
     public static char[][][] ans = {
         {
