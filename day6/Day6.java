@@ -1,11 +1,19 @@
 import java.util.*;
 import java.io.*;
 
-
+class Node {
+    public char type;
+    public ArrayList<Character> walkDirections;
+    public Node(char type) {
+        this.type = type;
+        this.walkDirections = new ArrayList<>();
+    }
+}
 
 
 public class Day6 {
     static String fileName = "input.txt";
+
     public static void main(String[] args) throws Exception {
         //part1();
         part2();
@@ -28,7 +36,7 @@ public class Day6 {
                     break;
                 }
             }
-            if(location != null) {
+            if (location != null) {
                 break;
             }
         }
@@ -37,7 +45,7 @@ public class Day6 {
 
         char direction = 'U';
 
-        while (notOnBorder(map,location)) {
+        while (notOnBorder(map, location)) {
             switch (direction) {
                 case 'U':
                     location[0]--;
@@ -55,20 +63,17 @@ public class Day6 {
 
             map.get(location[0])[location[1]] = 'X';
 
-            if(!notOnBorder(map,location)) {
+            if (!notOnBorder(map, location)) {
                 break;
             }
 
-            if(direction == 'U' && map.get(location[0]-1)[location[1]] == '#') {
+            if (direction == 'U' && map.get(location[0] - 1)[location[1]] == '#') {
                 direction = 'R';
-            }
-            else if(direction == 'D' && map.get(location[0]+1)[location[1]] == '#') {
+            } else if (direction == 'D' && map.get(location[0] + 1)[location[1]] == '#') {
                 direction = 'L';
-            }
-            else if(direction == 'L' && map.get(location[0])[location[1]-1] == '#') {
+            } else if (direction == 'L' && map.get(location[0])[location[1] - 1] == '#') {
                 direction = 'U';
-            }
-            else if(direction == 'R' && map.get(location[0])[location[1]+1] == '#') {
+            } else if (direction == 'R' && map.get(location[0])[location[1] + 1] == '#') {
                 direction = 'D';
             }
 
@@ -92,77 +97,49 @@ public class Day6 {
     }
 
     public static void part2() throws Exception {
-        ArrayList<char[]> map = new ArrayList<>();
-        Scanner myReader = new Scanner(new File(fileName));
-        while (myReader.hasNextLine()) {
-            String nextLine = myReader.nextLine();
-            map.add(nextLine.toCharArray());
-        }
+        ArrayList<char[]> normalPath = part1();
 
-        int[] location = null;
-        for (int i = 0; i < map.size(); i++) {
-            for (int j = 0; j < map.get(i).length; j++) {
-                if (map.get(i)[j] == '^') {
-                    location = new int[]{i, j};
+        ArrayList<ArrayList<Node>> newMap = createNewMap();
+        //find start
+        int[] startLocation = null;
+        for (int i = 0; i < newMap.size(); i++) {
+            for (int j = 0; j < newMap.get(i).size(); j++) {
+                if (newMap.get(i).get(j).type == '^') {
+                    startLocation = new int[]{i, j};
                     break;
                 }
             }
-            if(location != null) {
+            if (startLocation != null) {
                 break;
             }
         }
 
-
-        ArrayList<char[]> normalPath = part1();
-
         int numCycles = 0;
-        for(int i = 0; i < normalPath.size(); i++) {
+        for (int i = 0; i < normalPath.size(); i++) {
             for (int j = 0; j < normalPath.get(i).length; j++) {
                 if (normalPath.get(i)[j] != 'X') {
                     continue;
                 }
+                newMap = createNewMap();
+                newMap.get(i).get(j).type = '#';
 
-                ArrayList<char[]> modPath = modPath(map, i, j);
-                //System.out.println("Test");
-
-                if (detectCycle(modPath, location)) {
+                if(detectCycle(newMap, startLocation)) {
                     numCycles++;
                 }
-
-
             }
         }
+
         System.out.println(numCycles);
     }
 
-    public static ArrayList<char[]> modPath(ArrayList<char[]> normalPath, int i, int j) {
-        ArrayList<char[]> modPath = new ArrayList<>();
-        for(int x = 0; x < normalPath.size(); x++) {
-            char[] row = normalPath.get(x);
-            char[] newRow = new char[row.length];
-            modPath.add(newRow);
-            for(int y = 0; y < row.length; y++) {
-                if(x == i && y == j) {
-                    newRow[y] = '#';
-                }
-                else {
-                    newRow[y] = row[y];
-                }
-            }
-        }
 
-        return modPath;
-    }
-
-
-
-    public static boolean detectCycle(ArrayList<char[]> map, int[] startLocation) {
+    public static boolean detectCycle(ArrayList<ArrayList<Node>> map, int[] startLocation) {
         int[] location = new int[]{startLocation[0], startLocation[1]};
         char direction = 'U';
 
-        for (int i = 0; i < 100000; i++) {
 
-            map.get(location[0])[location[1]] = 'o';
+
+        while (modNotOnBorder(map, location)) {
             switch (direction) {
                 case 'U':
                     location[0]--;
@@ -178,56 +155,51 @@ public class Day6 {
                     break;
             }
 
+            if(map.get(location[0]).get(location[1]).walkDirections.contains(direction)){
+                return true;
+            }
+            map.get(location[0]).get(location[1]).walkDirections.add(direction);
 
-            if(!notOnBorder(map,location)) {
-                //System.out.println(i);
-
-
-                return false;
+            if (!modNotOnBorder(map, location)) {
+                break;
             }
 
-            if(direction == 'U' && map.get(location[0]-1)[location[1]] == '#') {
+            if (direction == 'U' && map.get(location[0] - 1).get(location[1]).type == '#') {
                 direction = 'R';
-            }
-            else if(direction == 'D' && map.get(location[0]+1)[location[1]] == '#') {
+            } else if (direction == 'D' && map.get(location[0] + 1).get(location[1]).type == '#') {
                 direction = 'L';
-            }
-            else if(direction == 'L' && map.get(location[0])[location[1]-1] == '#') {
+            } else if (direction == 'L' && map.get(location[0]).get(location[1] - 1).type == '#') {
                 direction = 'U';
-            }
-            else if(direction == 'R' && map.get(location[0])[location[1]+1] == '#') {
+            } else if (direction == 'R' && map.get(location[0]).get(location[1] + 1).type == '#') {
                 direction = 'D';
             }
 
-            //Rotate if it hits a wall
+
         }
-        for(int x = 0; x < map.size(); x++) {
-            for(int y = 0; y < map.get(x).length; y++) {
-                System.out.print(map.get(x)[y]);
+        return false;
+    }
+
+    public static ArrayList<ArrayList<Node>> createNewMap() throws FileNotFoundException {
+        Scanner myReader = new Scanner(new File(fileName));
+        ArrayList<ArrayList<Node>> map = new ArrayList<>();
+        while (myReader.hasNextLine()) {
+            ArrayList<Node> row = new ArrayList<>();
+            map.add(row);
+
+            char[] nextLine = myReader.nextLine().toCharArray();
+            for (int i = 0; i < nextLine.length; i++) {
+                row.add(new Node(nextLine[i]));
             }
-            System.out.println();
         }
-        System.out.println();
-        return true;
+
+        return map;
     }
 
     public static boolean notOnBorder(ArrayList<char[]> map, int[] location) {
         return location[0] != 0 && location[0] != map.size() - 1 && location[1] != 0 && location[1] != map.get(location[0]).length - 1;
     }
 
-//    public static boolean modNotOnBorder(ArrayList<Node[]> map, int[] location) {
-//        if(location[0] == 0 || location[0] == map.size()-1 || location[1] == 0 || location[1] == map.get(location[0]).length-1) {
-//            return false;
-//        }
-//        return true;
-//    }
+    public static boolean modNotOnBorder(ArrayList<ArrayList<Node>> map, int[] location) {
+        return location[0] != 0 && location[0] != map.size() - 1 && location[1] != 0 && location[1] != map.get(location[0]).size() - 1;
+    }
 }
-
-//class Node {
-//    public char type;
-//    public ArrayList<Character> walkDirections;
-//    public Node(char type) {
-//        this.type = type;
-//        this.walkDirections = new ArrayList<>();
-//    }
-//}

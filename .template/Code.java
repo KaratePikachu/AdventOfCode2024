@@ -2,19 +2,28 @@ import java.util.*;
 import java.io.*;
 
 public class Code{
+
     public static void main(String[] args) throws Exception{
         part1();
         //part2();
     }
 
     public static void part1() throws Exception{
-        ArrayList<String> lines = FileInput.getLines();
+
+        Scanner myReader = new Scanner(new File(".template/input.txt"));
+        while(myReader.hasNextLine()){
+
+            String nextLine = myReader.nextLine();
+            System.out.println(nextLine);
+
+            //Read Logic here
+            
+        }
+
         
 
-    }
+        //System.out.println(result);
 
-    public static void part2() throws Exception{
-        ArrayList<String> lines = FileInput.getLines();
-
+        
     }
 }
