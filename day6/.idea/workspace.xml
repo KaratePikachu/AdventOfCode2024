@@ -5,14 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="98cdd6d1-9d1a-4de4-bd69-d7133766e8bc" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/../.template/Code.class" beforeDir="false" afterPath="$PROJECT_DIR$/../.template/Code.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../.template/Code.java" beforeDir="false" afterPath="$PROJECT_DIR$/../.template/Code.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../.template/Day6.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../.template/FileInput.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../day4 (copy)/Code.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Day6.java" beforeDir="false" afterPath="$PROJECT_DIR$/Day6.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/day6/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/day6/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/day6/Day6.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/day6/Day6.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/day6/Node.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/day6/Node.class" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -21,6 +18,9 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/Day6.java" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 5
@@ -37,7 +37,7 @@
     &quot;git-widget-placeholder&quot;: &quot;main&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
     &quot;last_opened_file_path&quot;: &quot;/home/yoda/Documents/Programming/Advent Of Code/day6&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.keymap&quot;
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;
   }
 }</component>
   <component name="RunManager">
