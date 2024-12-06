@@ -1,7 +1,7 @@
 import java.util.*;
 import java.io.*;
 
-public class Code{
+public class Day3{
     public static void main(String[] args) throws Exception{
         //part1();
         part2();

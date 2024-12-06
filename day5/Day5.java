@@ -10,7 +10,7 @@ import java.io.*;
 //         seen = false;
 //     }
 // }
-public class Code{
+public class Day5 {
 
     
     // public static ArrayList<String> getLines() throws Exception{
