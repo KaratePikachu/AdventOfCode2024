@@ -4,10 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="98cdd6d1-9d1a-4de4-bd69-d7133766e8bc" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Day6v1.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-    </list>
+    <list default="true" id="98cdd6d1-9d1a-4de4-bd69-d7133766e8bc" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -41,7 +38,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "git-widget-placeholder": "main",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "/home/yoda/Documents/Programming/Advent Of Code/day6",
+    "last_opened_file_path": "/home/yoda/Documents/Programming/Advent Of Code/day7",
     "settings.editor.selected.configurable": "preferences.pluginManager"
   }
 }]]></component>
