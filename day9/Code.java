@@ -5,10 +5,10 @@ class Pair{
     public String type;
     public int size;
 
-//    public Pair(String type, int size){
-//        this.type=type;
-//        this.size=size;
-//    }
+    public Pair(String type, int size){
+        this.type=type;
+        this.size=size;
+    }
 }
 
 public class Code{
@@ -19,66 +19,104 @@ public class Code{
     }
 
     public static void part1() throws Exception{
-        ArrayList<String> data = new ArrayList<>();
+        ArrayList<Pair> data = new ArrayList<>();
         Scanner myReader = new Scanner(new File(fileName));
         char[] chars = myReader.nextLine().toCharArray();
         for(int i=0; i<chars.length; i++ ){
             int size = Integer.parseInt(String.valueOf(chars[i]));
-            for(int j=0; j<size; j++){
-                if (i%2==0) {
-                    data.add(""+(i/2));
-                }
-                else{
-                    data.add(".");
-                }
+            if (i%2==0) {
+                data.add(new Pair(""+(i/2),size));
+            }
+            else{
+                data.add(new Pair(".",size));
             }
             //System.out.println(i);
         }
 
-
-
-        while(true){
-            int lower = 0;
-            int upper = data.size()-1;
-            while(upper>=lower && data.get(upper).equals(".")){
-                upper--;
+        //int lastMovedID=Integer.MAX_VALUE;
+        for(int i=data.size()-1; i>=0; i--){
+            if(data.get(i).type.equals(".")){
+                continue;
             }
+//            if(lastMovedID<Integer.parseInt(data.get(i).type)){
+//                continue;
+//            }
 
-            while(lower<=upper && !data.get(lower).equals(".")){
-                lower++;
+            Pair mover = data.get(i);
+            //lastMovedID = Integer.parseInt(mover.type);
+
+            for(int j=0; j<i; j++){
+                if(!data.get(j).type.equals(".")){
+                    continue;
+                }
+
+
+
+
+                if(data.get(j).size == mover.size){
+
+                    data.get(j).type = mover.type;
+                    mover.type = ".";
+                    break;
+                }
+                else if(data.get(j).size > mover.size){
+
+                    data.get(j).size = data.get(j).size-mover.size;
+                    data.add(j,new Pair(mover.type,mover.size));
+                    mover.type = ".";
+                    break;
+                }
             }
-
-            if(upper<lower){
-                break;
+            for(int j=0; j<data.size()-1;j++){
+                if(data.get(j).type.equals(".") && data.get(j+1).type.equals(".")){
+                    data.get(j).size+=data.get(j+1).size;
+                    data.remove(j+1);
+                }
             }
-
-
-            data.set(lower,data.remove(upper));
         }
+
+        ArrayList<String> result = getThing(data);
+
+        //printThing(data);
 
         long sum = 0;
-        for(int i=0; i<data.size();i++){
-            if(data.get(i).equals(".")){
-                break;
+        for(int i=0; i<result.size();i++){
+            //System.out.print(result.get(i));
+            if(result.get(i).equals(".")){
+                continue;
             }
 
-            sum+=Long.parseLong(data.get(i))*i;
+            sum+=Long.parseLong(result.get(i))*i;
 
         }
 
-
-        printThing(data);
         System.out.println(sum);
+
+        //printThing(data);
+
+        //System.out.println(sum);
 
         //System.out.println(result);
 
         
     }
 
-    public static void printThing(ArrayList<String> thing){
-            for(String c : thing){
-                System.out.print(c+" ");
+    public static void printThing(ArrayList<Pair> thing){
+            for(Pair c : thing){
+                for(int i=0; i<c.size; i++){
+                    System.out.print(c.type+" ");
+                }
             }
             System.out.println();
+    }
+
+    public static ArrayList<String> getThing(ArrayList<Pair> thing){
+        ArrayList<String> result = new ArrayList<>();
+        for(Pair c : thing){
+            for(int i=0; i<c.size; i++){
+                result.add(c.type);
+            }
+        }
+        return result;
     }
 }
