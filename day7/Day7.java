@@ -3,9 +3,17 @@ import java.io.*;
 
 public class Day7 {
     static String fileName = "input.txt";
+    public static boolean foundPossibility = false;
 
     public static void main(String[] args) throws Exception{
-        part1();
+        long start = System.currentTimeMillis();
+        long numTrials = 10;
+        for(int i=0; i<numTrials; i++) {
+            part1();
+        }
+        System.out.println((System.currentTimeMillis()-start)/(numTrials*1000.0));
+        
+
         //part2();
     }
 
@@ -28,8 +36,10 @@ public class Day7 {
 
         long sum = 0;
         for(ArrayList<Long> row : eq){
-            if(validEquation(row, row.get(1), 2)){
+            validateEquation(row, row.get(1), 2);
+            if(Day7.foundPossibility){
                 sum+=row.getFirst();
+                Day7.foundPossibility = false;
             }
         }
 
@@ -42,12 +52,23 @@ public class Day7 {
         
     }
 
-    public static boolean validEquation(ArrayList<Long> row, long total, int index){
-
-        if(index == row.size()){
-            return row.getFirst()==total;
+    public static void validateEquation(ArrayList<Long> row, long total, int index){
+        if(total > row.getFirst()){
+            return;
+        }
+        if(foundPossibility){
+            return;
         }
 
-        return validEquation(row, total*row.get(index),index+1) || validEquation(row, total+row.get(index),index+1) || validEquation(row, Long.parseLong(""+total+""+row.get(index)),index+1);
+        if(index == row.size()){
+            if(row.getFirst()==total){
+                Day7.foundPossibility = true;
+            }
+            return;
+        }
+
+        validateEquation(row, total+row.get(index),index+1);
+        validateEquation(row, total*row.get(index),index+1);
+        validateEquation(row, Long.parseLong(""+total+row.get(index)),index+1);
     }
 }
