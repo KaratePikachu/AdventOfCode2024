@@ -1,11 +1,17 @@
 import java.util.*;
 import java.io.*;
 class Node{
-    boolean[] usedDir;
+    boolean usedUp;
+    boolean usedDown;
+    boolean usedLeft;
+    boolean usedRight;
 
     boolean inBlob;
     public Node(boolean inBlob){
-        usedDir = new boolean[4];
+        usedUp = false;
+        usedDown=false;
+        usedLeft=false;
+        usedRight=false;
         this.inBlob = inBlob;
     }
 }
@@ -32,7 +38,7 @@ public class Code{
                 }
                 area = 0;
                 perimeter = 0;
-                System.out.println("Region: "+map.get(i).get(j));
+                //System.out.println("Region: "+map.get(i).get(j));
                 floodFill(map,i,j,'.');
 
                 count(map);
@@ -67,30 +73,95 @@ public class Code{
                     continue;
                 }
 
-
-                for(int forward=0; forward<4; forward++){
-                    //Up
-                    int left = forward == 0 ? 3 : forward-1;
-                    int right = (forward+1)%4;
-                    if( (!nodeInBounds(map,i+dirs[forward][0],j+dirs[forward][1]) || !map.get(i+dirs[forward][0]).get(j+dirs[forward][1]).inBlob) && !map.get(i).get(j).usedDir[forward] ){
-                        perimeter++;
-                        int y = i;
-                        int x = j;
-                        while(nodeInBounds(map,x,y) && map.get(y).get(x).inBlob){
-                            map.get(y).get(x).usedDir[forward] = true;
-                            y+=dirs[left][0];
-                            x+=dirs[left][1];
-                        }
-
-                        y = i;
-                        x = j;
-                        while(nodeInBounds(map,x,y) && map.get(y).get(x).inBlob){
-                            map.get(y).get(x).usedDir[forward] = true;
-                            y+=dirs[right][0];
-                            x+=dirs[right][1];
-                        }
+                //up
+                if((!nodeInBounds(map,i-1,j) || !map.get(i-1).get(j).inBlob) && !map.get(i).get(j).usedUp){
+                    perimeter++;
+                    int a=i;
+                    int b=j;
+                    while(nodeInBounds(map,a,b) && map.get(a).get(b).inBlob){
+                        map.get(a).get(b).usedUp = true;
+                        b--;
+                    }
+                    a=i;
+                    b=j;
+                    while(nodeInBounds(map,a,b) && map.get(a).get(b).inBlob){
+                        map.get(a).get(b).usedUp = true;
+                        b++;
                     }
                 }
+
+                //down
+                if((!nodeInBounds(map,i+1,j) || !map.get(i+1).get(j).inBlob) && !map.get(i).get(j).usedDown){
+                    perimeter++;
+                    int a=i;
+                    int b=j;
+                    while(nodeInBounds(map,a,b) && map.get(a).get(b).inBlob){
+                        map.get(a).get(b).usedDown = true;
+                        b--;
+                    }
+                    a=i;
+                    b=j;
+                    while(nodeInBounds(map,a,b) && map.get(a).get(b).inBlob){
+                        map.get(a).get(b).usedDown = true;
+                        b++;
+                    }
+                }
+
+                //left
+                if((!nodeInBounds(map,i,j-1) || !map.get(i).get(j-1).inBlob) && !map.get(i).get(j).usedLeft){
+                    perimeter++;
+                    int a=i;
+                    int b=j;
+                    while(nodeInBounds(map,a,b) && map.get(a).get(b).inBlob){
+                        map.get(a).get(b).usedLeft = true;
+                        a--;
+                    }
+                    a=i;
+                    b=j;
+                    while(nodeInBounds(map,a,b) && map.get(a).get(b).inBlob){
+                        map.get(a).get(b).usedLeft = true;
+                        a++;
+                    }
+                }
+
+                //right
+                if((!nodeInBounds(map,i,j+1) || !map.get(i).get(j+1).inBlob) && !map.get(i).get(j).usedRight){
+                    perimeter++;
+                    int a=i;
+                    int b=j;
+                    while(nodeInBounds(map,a,b) && map.get(a).get(b).inBlob){
+                        map.get(a).get(b).usedRight = true;
+                        a--;
+                    }
+                    a=i;
+                    b=j;
+                    while(nodeInBounds(map,a,b) && map.get(a).get(b).inBlob){
+                        map.get(a).get(b).usedRight = true;
+                        a++;
+                    }
+                }
+
+//                //Up
+//                int left = forward == 0 ? 3 : forward-1;
+//                int right = (forward+1)%4;
+//                if( (!nodeInBounds(map,i+dirs[forward][0],j+dirs[forward][1]) || !map.get(i+dirs[forward][0]).get(j+dirs[forward][1]).inBlob) && !map.get(i).get(j).usedDir[forward] ){
+//                    perimeter++;
+//                    int y = i;
+//                    int x = j;
+//                    while(nodeInBounds(map,x,y) && map.get(y).get(x).inBlob){
+//                        map.get(y).get(x).usedDir[forward] = true;
+//                        y+=dirs[left][0];
+//                        x+=dirs[left][1];
+//                    }
+//
+//                    y = i;
+//                    x = j;
+//                    while(nodeInBounds(map,x,y) && map.get(y).get(x).inBlob){
+//                        map.get(y).get(x).usedDir[forward] = true;
+//                        y+=dirs[right][0];
+//                        x+=dirs[right][1];
+//                    }
+//                }
             }
         }
 
@@ -172,7 +243,7 @@ public class Code{
 
     public static ArrayList<ArrayList<Character>> createMap() throws FileNotFoundException {
         ArrayList<ArrayList<Character>> map = new ArrayList<>();
-        Scanner myReader = new Scanner(new File("input.txt"));
+        Scanner myReader = new Scanner(new File("test2.txt"));
         while(myReader.hasNextLine()){
             ArrayList<Character> row = new ArrayList<>();
             map.add(row);

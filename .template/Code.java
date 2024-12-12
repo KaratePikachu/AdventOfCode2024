@@ -10,7 +10,7 @@ public class Code{
 
     public static void part1() throws Exception{
 
-        Scanner myReader = new Scanner(new File(".template/input.txt"));
+        Scanner myReader = new Scanner(new File("test.txt"));
         while(myReader.hasNextLine()){
 
             String nextLine = myReader.nextLine();
