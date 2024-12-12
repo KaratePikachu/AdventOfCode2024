@@ -1,5 +1,14 @@
 import java.util.*;
 import java.io.*;
+class Node{
+    boolean[] usedDir;
+
+    boolean inBlob;
+    public Node(boolean inBlob){
+        usedDir = new boolean[4];
+        this.inBlob = inBlob;
+    }
+}
 
 public class Code{
     static long perimeter = 0;
@@ -27,8 +36,9 @@ public class Code{
                 floodFill(map,i,j,'.');
 
                 count(map);
-                edges(map,i,j);
-                System.out.println(area+" "+perimeter+": "+(area*perimeter));
+                edges(toSpecial(map));
+                //System.out.println(area+" "+perimeter+": "+(area*perimeter));
+                sum+=area*perimeter;
                 floodFill(map,i,j,' ');
             }
         }
@@ -41,8 +51,7 @@ public class Code{
         
     }
 
-    public static void edges(ArrayList<ArrayList<Character>> map, int starti, int startj){
-        int dir = 0;
+    public static void edges(ArrayList<ArrayList<Node>> map){
         int[][] dirs = {
                 {1,0},
                 {0,1},
@@ -50,32 +59,42 @@ public class Code{
                 {0,-1}
         };
 
-        int i=starti;
-        int j=startj;
 
-        do{
-            int[] front = dirs[dir];
-            int[] left = (dir==0) ? dirs[3] : dirs[dir-1];
-            int[] right = dirs[(dir+1)%4];
-            //can turn left
-            if(inBounds(map,i+left[0],j+left[1]) && map.get(i+left[0]).get(j+left[1]) == '.'){
-                dir = (dir==0) ? 3 : dir-1;
-                perimeter++;
-                i+=left[0];
-                j+=left[1];
-            }//forward
-            else if(inBounds(map,i+front[0],j+front[1]) && map.get(i+front[0]).get(j+front[1]) == '.'){
-                i+=front[0];
-                j+=front[1];
-            }//right
-            else if(!inBounds(map,i+front[0],j+front[1]) || map.get(i+front[0]).get(j+front[1]) != '.'){
-                perimeter++;
-                dir = (dir+1)%4;
+
+        for(int i=0; i<map.size(); i++){
+            for(int j=0; j<map.get(i).size(); j++){
+                if(!map.get(i).get(j).inBlob){
+                    continue;
+                }
+
+
+                for(int forward=0; forward<4; forward++){
+                    //Up
+                    int left = forward == 0 ? 3 : forward-1;
+                    int right = (forward+1)%4;
+                    if( (!nodeInBounds(map,i+dirs[forward][0],j+dirs[forward][1]) || !map.get(i+dirs[forward][0]).get(j+dirs[forward][1]).inBlob) && !map.get(i).get(j).usedDir[forward] ){
+                        perimeter++;
+                        int y = i;
+                        int x = j;
+                        while(nodeInBounds(map,x,y) && map.get(y).get(x).inBlob){
+                            map.get(y).get(x).usedDir[forward] = true;
+                            y+=dirs[left][0];
+                            x+=dirs[left][1];
+                        }
+
+                        y = i;
+                        x = j;
+                        while(nodeInBounds(map,x,y) && map.get(y).get(x).inBlob){
+                            map.get(y).get(x).usedDir[forward] = true;
+                            y+=dirs[right][0];
+                            x+=dirs[right][1];
+                        }
+                    }
+                }
             }
-
-            //System.out.println(i+", "+j+"! dir: "+dir);
         }
-        while(i!=starti || j!=startj || dir != 0);
+
+
 
 
 
@@ -127,11 +146,33 @@ public class Code{
         }
     }
 
+    public static boolean nodeInBounds(ArrayList<ArrayList<Node>> map, int i, int j){
+        try{
+            map.get(i).get(j);
+            return true;
+        }
+        catch(IndexOutOfBoundsException e){
+            return false;
+        }
+    }
+
+    public static ArrayList<ArrayList<Node>> toSpecial(ArrayList<ArrayList<Character>> map){
+        ArrayList<ArrayList<Node>> newOne = new ArrayList<>();
+        for(ArrayList<Character> row : map){
+            ArrayList<Node> newRow = new ArrayList<>();
+            newOne.add(newRow);
+            for(char c : row){
+                newRow.add(new Node(c == '.'));
+            }
+        }
+        return newOne;
+    }
+
 
 
     public static ArrayList<ArrayList<Character>> createMap() throws FileNotFoundException {
         ArrayList<ArrayList<Character>> map = new ArrayList<>();
-        Scanner myReader = new Scanner(new File("test2.txt"));
+        Scanner myReader = new Scanner(new File("input.txt"));
         while(myReader.hasNextLine()){
             ArrayList<Character> row = new ArrayList<>();
             map.add(row);
