@@ -57,117 +57,81 @@ public class Code{
         
     }
 
-    public static void edges(ArrayList<ArrayList<Node>> map){
-        int[][] dirs = {
-                {1,0},
-                {0,1},
-                {-1,0},
-                {0,-1}
-        };
-
-
+    public static void edges(ArrayList<ArrayList<Node>> map) {
 
         for(int i=0; i<map.size(); i++){
             for(int j=0; j<map.get(i).size(); j++){
                 if(!map.get(i).get(j).inBlob){
                     continue;
                 }
-
                 //up
-                if((!nodeInBounds(map,i-1,j) || !map.get(i-1).get(j).inBlob) && !map.get(i).get(j).usedUp){
-                    perimeter++;
-                    int a=i;
-                    int b=j;
-                    while(nodeInBounds(map,a,b) && map.get(a).get(b).inBlob){
-                        map.get(a).get(b).usedUp = true;
-                        b--;
-                    }
-                    a=i;
-                    b=j;
-                    while(nodeInBounds(map,a,b) && map.get(a).get(b).inBlob){
-                        map.get(a).get(b).usedUp = true;
-                        b++;
-                    }
+                if((!nodeInBounds(map,i-1,j) || !map.get(i-1).get(j).inBlob)) {
+                    map.get(i).get(j).usedUp = true;
                 }
 
-                //down
-                if((!nodeInBounds(map,i+1,j) || !map.get(i+1).get(j).inBlob) && !map.get(i).get(j).usedDown){
-                    perimeter++;
-                    int a=i;
-                    int b=j;
-                    while(nodeInBounds(map,a,b) && map.get(a).get(b).inBlob){
-                        map.get(a).get(b).usedDown = true;
-                        b--;
-                    }
-                    a=i;
-                    b=j;
-                    while(nodeInBounds(map,a,b) && map.get(a).get(b).inBlob){
-                        map.get(a).get(b).usedDown = true;
-                        b++;
-                    }
+                //d
+                if((!nodeInBounds(map,i+1,j) || !map.get(i+1).get(j).inBlob)) {
+                    map.get(i).get(j).usedDown = true;
                 }
 
-                //left
-                if((!nodeInBounds(map,i,j-1) || !map.get(i).get(j-1).inBlob) && !map.get(i).get(j).usedLeft){
-                    perimeter++;
-                    int a=i;
-                    int b=j;
-                    while(nodeInBounds(map,a,b) && map.get(a).get(b).inBlob){
-                        map.get(a).get(b).usedLeft = true;
-                        a--;
-                    }
-                    a=i;
-                    b=j;
-                    while(nodeInBounds(map,a,b) && map.get(a).get(b).inBlob){
-                        map.get(a).get(b).usedLeft = true;
-                        a++;
-                    }
+                //l
+                if((!nodeInBounds(map,i,j-1) || !map.get(i).get(j-1).inBlob)) {
+                    map.get(i).get(j).usedLeft = true;
                 }
 
-                //right
-                if((!nodeInBounds(map,i,j+1) || !map.get(i).get(j+1).inBlob) && !map.get(i).get(j).usedRight){
+                //r
+                if((!nodeInBounds(map,i,j+1) || !map.get(i).get(j+1).inBlob)) {
+                    map.get(i).get(j).usedRight = true;
+                }
+            }
+        }
+
+        boolean upOn = true;
+        boolean downOn = true;
+        for(int i=0; i<map.size(); i++) {
+            for (int j = 0; j<map.get(i).size(); j++){
+                if(!upOn && !map.get(i).get(j).usedUp){
+                    upOn=true;
+                }
+                else if(upOn && map.get(i).get(j).usedUp){
                     perimeter++;
-                    int a=i;
-                    int b=j;
-                    while(nodeInBounds(map,a,b) && map.get(a).get(b).inBlob){
-                        map.get(a).get(b).usedRight = true;
-                        a--;
-                    }
-                    a=i;
-                    b=j;
-                    while(nodeInBounds(map,a,b) && map.get(a).get(b).inBlob){
-                        map.get(a).get(b).usedRight = true;
-                        a++;
-                    }
+                    upOn=false;
                 }
 
-//                //Up
-//                int left = forward == 0 ? 3 : forward-1;
-//                int right = (forward+1)%4;
-//                if( (!nodeInBounds(map,i+dirs[forward][0],j+dirs[forward][1]) || !map.get(i+dirs[forward][0]).get(j+dirs[forward][1]).inBlob) && !map.get(i).get(j).usedDir[forward] ){
-//                    perimeter++;
-//                    int y = i;
-//                    int x = j;
-//                    while(nodeInBounds(map,x,y) && map.get(y).get(x).inBlob){
-//                        map.get(y).get(x).usedDir[forward] = true;
-//                        y+=dirs[left][0];
-//                        x+=dirs[left][1];
-//                    }
-//
-//                    y = i;
-//                    x = j;
-//                    while(nodeInBounds(map,x,y) && map.get(y).get(x).inBlob){
-//                        map.get(y).get(x).usedDir[forward] = true;
-//                        y+=dirs[right][0];
-//                        x+=dirs[right][1];
-//                    }
-//                }
+                if(!downOn && !map.get(i).get(j).usedDown){
+                    downOn=true;
+                }
+                else if(downOn && map.get(i).get(j).usedDown){
+                    perimeter++;
+                    downOn=false;
+                }
             }
         }
 
 
+        boolean leftOn = true;
+        boolean rightOn = true;
+        for (int j = 0; j<map.get(0).size(); j++){
+            for(int i=0; i<map.size(); i++) {
+                if(!leftOn && !map.get(i).get(j).usedLeft){
+                    leftOn=true;
+                }
+                else if(leftOn && map.get(i).get(j).usedLeft){
+                    perimeter++;
+                    leftOn=false;
+                }
+
+                if(!rightOn && !map.get(i).get(j).usedRight){
+                    rightOn=true;
+                }
+                else if(rightOn && map.get(i).get(j).usedRight){
+                    perimeter++;
+                    rightOn=false;
+                }
 
 
+            }
+        }
 
     }
 
@@ -243,7 +207,7 @@ public class Code{
 
     public static ArrayList<ArrayList<Character>> createMap() throws FileNotFoundException {
         ArrayList<ArrayList<Character>> map = new ArrayList<>();
-        Scanner myReader = new Scanner(new File("test2.txt"));
+        Scanner myReader = new Scanner(new File("input.txt"));
         while(myReader.hasNextLine()){
             ArrayList<Character> row = new ArrayList<>();
             map.add(row);
