@@ -26,7 +26,7 @@ public class Code{
         for(int i=0; i<startIs.size(); i++){
 
             traverse(map,startIs.get(i),startJs.get(i),0);
-            map = createMap();
+            //map = createMap();
         }
 
         System.out.println(paths);
@@ -41,7 +41,7 @@ public class Code{
     public static void traverse(ArrayList<ArrayList<Integer>> map, int i, int j, int level){
         if(level == 9){
             Code.paths++;
-            map.get(i).set(j,-1);
+            //map.get(i).set(j,-1);
             return;
         }
 
