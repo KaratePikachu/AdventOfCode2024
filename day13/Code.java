@@ -14,7 +14,7 @@ class Equation{
 }
 public class Code{
     public static String fileName = "input.txt";
-
+    public static long sum = 0;
     public static void main(String[] args) throws Exception{
         //Data Structure
         ArrayList<Equation> equations = new ArrayList<>();
@@ -31,48 +31,33 @@ public class Code{
                     Long.parseLong(lineB.substring(lineB.indexOf("Y+")+2))};
             long[] sol = new long[]{Long.parseLong(lineSol.substring(lineSol.indexOf("X=")+2,lineSol.indexOf(","))),
                     Long.parseLong(lineSol.substring(lineSol.indexOf("Y=")+2))};
-            Equation eq = new Equation(eq1,eq2,sol);
-            eq.prize[0]+=10000000000000L;
-            eq.prize[1]+=10000000000000L;
+            sol[0]+=10000000000000L;
+            sol[1]+=10000000000000L;
 
-            long numerator =
-            unprocessed.buttonA[0]-
-            equations.add();
+            long numerator = sol[0]*eq2[1]-sol[1]*eq2[0];
+
+            long demoninator = eq1[0]*eq2[1]-eq1[1]*eq2[0];
+
+            if(numerator%demoninator == 0){
+                long a = numerator/demoninator;
+                long b = (sol[1]-a*eq1[1])/eq2[1];
+
+                sum+=3*a+b;
+                if((a*eq1[0]+b*eq2[0] != sol[0]) || (a*eq1[1]+b*eq2[1]!=sol[1])){
+                    System.out.println(eq1[0]+" "+eq1[1]);
+                    System.out.println("!!!");
+                    System.out.println(a*eq1[0]+b*eq2[0]+" != "+sol[0]);
+                    System.out.println((a*eq1[1]+b*eq2[1]+" != "+sol[1]));
+                    sum-=3*a+b;
+                }
+
+            }
+
 
             myReader.nextLine();
         }
         //System.out.println(result);
 
-        //long sum = 0;
-
-//        for(Equation e : equations){
-//            sum+=smallestCost(e);
-//        }
-//        System.out.println(sum);
-    }
-
-    public static long smallestCost(Equation equation){
-        long smallestCost = -1;
-        for(int x1=0; x1<101; x1++){
-            for(int x2=0; x2<101; x2++){
-                long combx = equation.buttonA[0] *x1+ equation.buttonB[0] *x2;
-                long comby = equation.buttonA[1] *x1+ equation.buttonB[1] *x2;
-
-                if(combx == equation.prize[0] && comby == equation.prize[1]){
-                    int tokens = x1*3+x2;
-                    if(smallestCost==-1){
-                        smallestCost = tokens;
-                    }
-                    else if(tokens<smallestCost){
-                        smallestCost = tokens;
-                    }
-                }
-            }
-        }
-
-        if(smallestCost==-1){
-            smallestCost = 0;
-        }
-        return smallestCost;
+        System.out.println(sum);
     }
 }
