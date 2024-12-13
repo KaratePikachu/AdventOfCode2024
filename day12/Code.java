@@ -39,13 +39,12 @@ public class Code{
                 area = 0;
                 perimeter = 0;
                 //System.out.println("Region: "+map.get(i).get(j));
-                floodFill(map,i,j,'.');
+                floodFill(map,i,j,'.',true);
 
-                count(map);
                 edges(toSpecial(map));
                 //System.out.println(area+" "+perimeter+": "+(area*perimeter));
                 sum+=area*perimeter;
-                floodFill(map,i,j,' ');
+                floodFill(map,i,j,' ',false);
             }
         }
 
@@ -65,22 +64,22 @@ public class Code{
                     continue;
                 }
                 //up
-                if((!nodeInBounds(map,i-1,j) || !map.get(i-1).get(j).inBlob)) {
+                if(inBlob(map,i-1,j,' ')) {
                     map.get(i).get(j).usedUp = true;
                 }
 
                 //d
-                if((!nodeInBounds(map,i+1,j) || !map.get(i+1).get(j).inBlob)) {
+                if(inBlob(map,i+1,j,' ')) {
                     map.get(i).get(j).usedDown = true;
                 }
 
                 //l
-                if((!nodeInBounds(map,i,j-1) || !map.get(i).get(j-1).inBlob)) {
+                if(inBlob(map,i,j-1,' ')) {
                     map.get(i).get(j).usedLeft = true;
                 }
 
                 //r
-                if((!nodeInBounds(map,i,j+1) || !map.get(i).get(j+1).inBlob)) {
+                if(inBlob(map,i,j+1,' ')) {
                     map.get(i).get(j).usedRight = true;
                 }
             }
@@ -135,25 +134,12 @@ public class Code{
 
     }
 
-    public static void count(ArrayList<ArrayList<Character>> map){
-        int[][] locs = {
-                {-1,0},
-                {1,0},
-                {0,-1},
-                {0,1}
-        };
-
-        for(int i=0; i<map.size(); i++){
-            for( int j=0; j<map.get(i).size(); j++){
-                if(map.get(i).get(j) != '.'){
-                    continue;
-                }
-                area++;
-            }
-        }
+    public static boolean inBlob(ArrayList<ArrayList<Node>> map, int i, int j, char val){
+        return (!nodeInBounds(map,i,j) || !map.get(i).get(j).inBlob);
     }
 
-    public static void floodFill(ArrayList<ArrayList<Character>> map, int i, int j, char val){
+    public static void floodFill(ArrayList<ArrayList<Character>> map, int i, int j, char val, boolean doCount){
+
         char oldVal = map.get(i).get(j);
         int[][] locs = {
                 {-1,0},
@@ -163,6 +149,11 @@ public class Code{
         };
 
         map.get(i).set(j,val);
+
+        if(doCount){
+            area++;
+        }
+
 
         for(int[] loc : locs){
             if(inBounds(map,i+loc[0],j+loc[1]) && map.get(i+loc[0]).get(j+loc[1]) == oldVal){
