@@ -2,7 +2,7 @@ import java.util.*;
 import java.io.*;
 
 public class Code{
-    public static String fileName = "test.txt";
+    public static String fileName = "input.txt";
     public static int[] robotPos = new int[2];
     public static void main(String[] args) throws Exception{
         //Data Structure
@@ -77,19 +77,19 @@ public class Code{
                     break;
             }
 
-            System.out.println(d);
-            for(ArrayList<Character> row : map){
-                for(char c : row){
-                    System.out.print(c);
-                }
-                System.out.println();
-            }
+//            System.out.println(d);
+//            for(ArrayList<Character> row : map){
+//                for(char c : row){
+//                    System.out.print(c);
+//                }
+//                System.out.println();
+//            }
         }
 
         int sum = 0;
         for(int i=0; i<map.size(); i++){
             for(int j=0; j<map.get(0).size(); j++){
-                if(map.get(i).get(j) == 'O'){
+                if(map.get(i).get(j) == '['){
                     sum+=i*100+j;
                 }
             }
@@ -109,15 +109,51 @@ public class Code{
             robotPos[1]+=vector[1];
         }
         else{
-            if(push(map,robotPos[0],robotPos[1],vector)){
+            if(canPush(map,robotPos[0],robotPos[1],vector)){
+                push(map,robotPos[0],robotPos[1],vector);
                 robotPos[0]+=vector[0];
                 robotPos[1]+=vector[1];
             }
         }
     }
 
+    public static boolean canPush(ArrayList<ArrayList<Character>> map, int posi, int posj, int[] vector) throws Exception{
+        char frontThing = map.get(posi+vector[0]).get(posj+vector[1]);
+
+        boolean canPush;
+        if(frontThing == '[' || frontThing == ']'){
+            if(vector[0]==0){//Side to side
+                canPush = canPush(map,posi+vector[0],posj+vector[1],vector);
+            }
+            else{//hell
+                boolean leftPushed;
+                boolean rightPushed;
+                if(frontThing == '['){
+                    leftPushed = canPush(map,posi+vector[0],posj+vector[1],vector);
+                    rightPushed = canPush(map,posi+vector[0],posj+vector[1]+1,vector);
+                }
+                else {
+                    leftPushed = canPush(map,posi+vector[0],posj+vector[1]-1,vector);
+                    rightPushed = canPush(map,posi+vector[0],posj+vector[1],vector);
+                }
+                canPush = leftPushed && rightPushed;
+            }
+
+        }
+        else if(frontThing == '#'){
+            canPush = false;
+        }
+        else if(frontThing == '.'){
+            canPush = true;
+        }
+        else{
+            throw new Exception("Huh?");
+        }
+
+        return canPush;
+    }
+
     public static boolean push(ArrayList<ArrayList<Character>> map, int posi, int posj, int[] vector) throws Exception {
-        char currentThing = map.get(posi+vector[0]).get(posj+vector[1]);
         char frontThing = map.get(posi+vector[0]).get(posj+vector[1]);
 
         boolean canPush;
