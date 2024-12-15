@@ -2,7 +2,7 @@ import java.util.*;
 import java.io.*;
 
 public class Code{
-    public static String fileName = "input.txt";
+    public static String fileName = "test.txt";
     public static int[] robotPos = new int[2];
     public static void main(String[] args) throws Exception{
         //Data Structure
@@ -24,10 +24,14 @@ public class Code{
 
             for(char c : nextLine.toCharArray()){
                 if(c=='@'){
-                    row.add(c);
+                    row.add('@');
                     robotPos = new int[]{map.size()-1,row.size()-1};
                     //System.out.println(robotPos[0]+" "+robotPos[1]);
                     row.add('.');
+                }
+                else if(c=='O'){
+                    row.add('[');
+                    row.add(']');
                 }
                 else{
                     row.add(c);
@@ -38,6 +42,8 @@ public class Code{
             //Read Logic here
 
         }
+
+
 
 
 
@@ -53,12 +59,7 @@ public class Code{
         }
 
 
-//        for(ArrayList<Character> row : map){
-//            for(char c : row){S
-//                System.out.print(c);
-//            }
-//            System.out.println();
-//        }
+
 
         for(char d : movements){
             switch (d){
@@ -77,12 +78,12 @@ public class Code{
             }
 
             System.out.println(d);
-//            for(ArrayList<Character> row : map){
-//                for(char c : row){
-//                    System.out.print(c);
-//                }
-//                System.out.println();
-//            }
+            for(ArrayList<Character> row : map){
+                for(char c : row){
+                    System.out.print(c);
+                }
+                System.out.println();
+            }
         }
 
         int sum = 0;
@@ -116,14 +117,33 @@ public class Code{
     }
 
     public static boolean push(ArrayList<ArrayList<Character>> map, int posi, int posj, int[] vector) throws Exception {
+        char currentThing = map.get(posi+vector[0]).get(posj+vector[1]);
+        char frontThing = map.get(posi+vector[0]).get(posj+vector[1]);
+
         boolean canPush;
-        if(map.get(posi+vector[0]).get(posj+vector[1]) == 'O'){
-            canPush = push(map,posi+vector[0],posj+vector[1],vector);
+        if(frontThing == '[' || frontThing == ']'){
+            if(vector[0]==0){//Side to side
+                canPush = push(map,posi+vector[0],posj+vector[1],vector);
+            }
+            else{//hell
+                boolean leftPushed;
+                boolean rightPushed;
+                if(frontThing == '['){
+                    leftPushed = push(map,posi+vector[0],posj+vector[1],vector);
+                    rightPushed = push(map,posi+vector[0],posj+vector[1]+1,vector);
+                }
+                else {
+                    leftPushed = push(map,posi+vector[0],posj+vector[1]-1,vector);
+                    rightPushed = push(map,posi+vector[0],posj+vector[1],vector);
+                }
+                canPush = leftPushed && rightPushed;
+            }
+
         }
-        else if(map.get(posi+vector[0]).get(posj+vector[1]) == '#'){
+        else if(frontThing == '#'){
             canPush = false;
         }
-        else if(map.get(posi+vector[0]).get(posj+vector[1]) == '.'){
+        else if(frontThing == '.'){
             canPush = true;
         }
         else{
