@@ -1,305 +1,153 @@
+
 import java.util.*;
 import java.io.*;
 
 public class Code{
-    static PositionPriorityQueue picked = new PositionPriorityQueue();
-    static PositionPriorityQueue values = new PositionPriorityQueue();
-
-    //Feed all the values into "values"
-    //Keep popping off the top and removing/updating them back into values;
-
     public static String fileName = "input.txt";
-    public static void main(String[] args) throws Exception{
-        Position end = null;
-        Scanner myReader = new Scanner(new File(fileName));
-        int y = 0;
-        while(myReader.hasNextLine()){
-            String nextLine = myReader.nextLine();
+    static ArrayList<ArrayList<Position>> map = new ArrayList<>();
 
-            char[] chars = nextLine.toCharArray();
-            for(int x=0; x < chars.length; x++){
+    public static void main(String[] args) throws Exception{
+        //Data Structure
+        Position end = null;
+
+        Scanner myReader = new Scanner(new File(fileName));
+        while(myReader.hasNextLine()){
+            ArrayList<Position> row = new ArrayList<>();
+            map.add(row);
+
+            for(char c : myReader.nextLine().toCharArray()){
                 Position newPos;
-                if(chars[x] == 'S'){
-                    newPos = new Position(x,y,0);
-                    newPos.parent = 'w';
+                if(c == 'S'){
+                    newPos = new Position(0);
+                    newPos.parent = new int[]{0,-1};
                 }
-                else if(chars[x] != '#'){
-                    newPos = new Position(x,y,Integer.MAX_VALUE);
-                    if(chars[x] == 'E'){
+                else if(c != '#'){
+                    newPos = new Position(Integer.MAX_VALUE);
+                    if(c == 'E'){
                         end = newPos;
                     }
                 }
                 else{
-                    continue;
+                    newPos = Position.WALL;
                 }
-
-                values.add(newPos);
-
+                row.add(newPos);
             }
 
             //Read Logic here
-            y++;
+
         }
 
+        //Pick smallest and mark as picked
+        int[] pickedIndex = pickSmallest();
+        Position picked = map.get(pickedIndex[0]).get(pickedIndex[1]);
 
-        while(!values.isEmpty()){
-            Position pickedPos = values.remove();
 
-            //System.out.println("-----");
-            //System.out.println("Picked: "+pickedPos.toString()+" "+pickedPos.value);
-//            for(Position p : values){
-//                if(pickedPos.value>p.value){
-//                    System.out.println("Somehow picked value too big: "+p.toString()+" "+p.value);
-//                }
-//            }
+        while(true){
+            //System.out.println("Picked's Parent: "+picked.parent[0]+" "+picked.parent[1]);
+            //System.out.println("Picked: "+pickedIndex[0]+" "+pickedIndex[1]+": "+picked.value);
+            //Update Neighbors
+            int[][] directions = new int[][]{
+                    {-1,0},
+                    {0,1},
+                    {1,0},
+                    {0,-1}
+            };
 
-            //System.out.println(Position.sameXY(pickedPos, new Position(pickedPos)));
-            picked.add(pickedPos);
-            for(Position p : values.getAdjacents(pickedPos)){
-                if(picked.contains(p)){
+            for(int[] dir : directions){
+                Position neighbor = map.get(pickedIndex[0]+dir[0]).get(pickedIndex[1]+dir[1]);
+
+                if(neighbor == Position.WALL){
                     continue;
                 }
-                int travelWeight = pickedPos.value;
-                values.remove(p);
 
-                if(Position.inLine(pickedPos,p)){
-                    travelWeight+=1;
+                int travelValue = picked.value;
+                if(dir[0]+picked.parent[0] == 0 && dir[1]+picked.parent[1] == 0){
+                    travelValue+=1;
+
                 }
                 else{
-                    travelWeight+=1001;
+                    travelValue+=1001;
                 }
 
-                if(travelWeight<p.value){
-                    p.value = travelWeight;
-                    p.setParent(pickedPos);
+
+
+                if(travelValue< neighbor.value){
+                    neighbor.value = travelValue;
+                    //System.out.println((pickedIndex[0]+dir[0])+", "+(pickedIndex[1]+dir[1])+": "+neighbor.value);
+                    neighbor.parent = new int[]{-dir[0],-dir[1]};
                 }
 
-                //System.out.println(p.toString());
-
-                values.add(p);
-
-
-            }
-        }
-
-
-
-
-
-
-        ArrayList<ArrayList<Character>> map = new ArrayList<>();
-        myReader = new Scanner(new File(fileName));
-
-        while(myReader.hasNextLine()){
-            ArrayList<Character> row = new ArrayList<>();
-            map.add(row);
-            for(char c : myReader.nextLine().toCharArray()){
-                row.add(c);
+                //System.out.println(neighbor);
             }
 
-
-        }
-
-
-
-
-
-        Position curr = new Position(end);
-
-
-        while(curr.value!=0){
-            map.get(curr.y).set(curr.x,'@');
-            //System.out.println(curr+" "+curr.value);
-            if(curr.parent =='n'){
-                curr.y-=1;
+            pickedIndex = pickSmallest();
+            if(pickedIndex == null){
+                break;
             }
-            else if(curr.parent =='e'){
-                curr.x+=1;
-            }
-            else if(curr.parent =='s'){
-                curr.y+=1;
-            }
-            else if(curr.parent =='w'){
-                curr.x-=1;
-            }
-            else{
-                System.out.println("PARENT???");
-                System.exit(0);
-            }
-
-            assert picked.get(curr) != null;
-            curr = new Position(picked.get(curr));
-        }
-
-        for(ArrayList<Character> row : map){
-            for(char c : row){
-                System.out.print(c);
-            }
-            System.out.println();
+            picked = map.get(pickedIndex[0]).get(pickedIndex[1]);
         }
 
         System.out.println(end.value);
+        //printThing(map);
 
+        //System.out.println(result);
     }
 
-    private static class PositionPriorityQueue extends ArrayList<Position> {
-        public Position peek(){
-            if(this.isEmpty()){
-                throw new NoSuchElementException();
-            }
+    public static int[] pickSmallest(){
+        int[] smallestIndex = null;
+        int smallestValue = Integer.MAX_VALUE;
 
-            Position smallestValuePos = this.get(0);
-
-            for(Position pos : this){
-                if(smallestValuePos.value>pos.value){
-                    smallestValuePos = pos;
+        for(int i=0; i<map.size(); i++){
+            for(int j=0; j<map.get(i).size(); j++){
+                Position p = map.get(i).get(j);
+                if(p !=Position.WALL && !p.picked && p.value < smallestValue){
+                    smallestValue = p.value;
+                    smallestIndex = new int[]{i,j};
                 }
             }
-
-            return smallestValuePos;
         }
-
-        public Position remove(){
-            Position val = peek();
-            this.remove(val);
-            return val;
+        if(smallestIndex!=null){
+            map.get(smallestIndex[0]).get(smallestIndex[1]).picked = true;
+            //System.out.println("Set "+smallestIndex[0]+", "+smallestIndex[1]+" as picked");
         }
+        return smallestIndex;
+    }
 
-        public ArrayList<Position> getAdjacents(Position p){
-            ArrayList<Position> positions = new ArrayList<>();
-            int[][] offsets = {
-                    {-1,0},//UP
-                    {0,1},//RIGHT
-                    {1,0},//DOWN
-                    {0,-1}//LEFT
-            };
-            for(Position other : this){
-                for(int i=0; i<offsets.length; i++){
-//                    if((i+2)%4==p.parent){
-//                        continue;
-//                    }
-                    int[] nudge = offsets[i];
-                    if(Position.sameXY(other,new Position(p.x+nudge[0],p.y+nudge[1],Integer.MAX_VALUE))){
-                        positions.add(other);
-                    }
+    public static void printThing(){
+        for(ArrayList<Position> row : map){
+            for(Position p : row){
+                if(p==Position.WALL){
+                    System.out.print("#");
+                }
+                else{
+                    System.out.print(".");
                 }
             }
-
-            return positions;
-        }
-
-
-        public Position get(Position key){
-            for(Position other : this){
-                if(Position.sameXY(key,other)){
-                    return other;
-                }
-            }
-            return null;
+            System.out.println();
         }
     }
 }
 
-class Position implements Comparable<Position>{
-    public int x;
-    public int y;
+class Position{
+    public static Position WALL = new Position(-1000);
     public int value;
-    public char parent;
+    public boolean picked;
+    public int[] parent;
 
-//    public Position(int x, int y){
-//        this.x=x;
-//        this.y=y;
-//        this.value = Long.MAX_VALUE;
-//    }
-
-    public Position(int x, int y, int value){
-        this.x=x;
-        this.y=y;
-        this.value = value;
-        this.parent = ' ';
+    public Position(int value){
+        this.value=value;
+        picked = false;
     }
 
-    public Position(Position other) {
-        this.x=other.x;
-        this.y=other.y;
-        this.value=other.value;
-        this.parent=other.parent;
-    }
-
-    @Override
-    public boolean equals(Object other){
-        if(other instanceof Position otherPos){
-            return this.x==otherPos.x && this.y==otherPos.y;
-        }
-        return false;
-    }
-
-    public static boolean sameXY(Position first, Position second) {
-//        if(first.x == second.x && first.y ==second.y){
-//            System.out.println(first.toString()+" "+second.toString());
-//        }
-        return first.x == second.x && first.y ==second.y;
-    }
-
-    public static boolean inLine(Position source, Position destination){
-        if(source.parent == ' '){
-
-            System.out.println("Critical Error: Parent somehow -1");
-            System.out.println(source);
-            System.exit(-1);
-        }
-
-        //U/D is 0/2
-        //LR is 1/3
-        if(source.parent=='e' || source.parent =='w'){//Left Right case, want different left right
-            return source.x-destination.x != 0;
-        }
-        else{
-            return source.y-destination.y != 0;
-        }
-    }
-
-    public void setParent(Position other){
-        int xDiff = this.x-other.x;
-        int yDiff = this.y-other.y;
-
-        if(yDiff == 1){
-            this.parent = 'n';
-        }
-        else if(xDiff == -1){
-            this.parent = 'e';
-        }
-        else if(yDiff == -1){
-            this.parent = 's';
-        }
-        else if(xDiff == 1){
-            this.parent = 'w';
-        }
-        else{
-            System.out.println("??? non normal diff");
-            System.exit(-1);
-        }
-    }
-
-
-    @Override
-    public int compareTo(Position o) {
-        int diff = (int) (this.value-o.value);
-        if(diff !=0){
-            return -diff;
-        }
-
-        diff = (int) (this.x-o.x);
-        if(diff!=0){
-            return diff;
-        }
-
-        diff = (int) (this.y-o.y);
-        return diff;
+    public void setParent(int vi, int vj){
+        parent = new int[]{vi,vj};
     }
 
     @Override
     public String toString(){
-        return x+", "+y+": "+parent;
+        if(parent == null){
+            return value+", (null)";
+        }
+        return value+", ("+parent[0]+", "+parent[1]+")";
     }
 }
