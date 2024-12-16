@@ -1,108 +1,6 @@
 import java.util.*;
 import java.io.*;
-class Position implements Comparable<Position>{
-    public int x;
-    public int y;
-    public long value;
-    public char parent;
 
-//    public Position(int x, int y){
-//        this.x=x;
-//        this.y=y;
-//        this.value = Long.MAX_VALUE;
-//    }
-
-    public Position(int x, int y, long value){
-        this.x=x;
-        this.y=y;
-        this.value = value;
-        this.parent = ' ';
-    }
-
-    public Position(Position other) {
-        this.x=other.x;
-        this.y=other.y;
-        this.value=other.value;
-        this.parent=other.parent;
-    }
-
-    @Override
-    public boolean equals(Object other){
-        if(other instanceof Position otherPos){
-            return this.x==otherPos.x && this.y==otherPos.y;
-        }
-        return false;
-    }
-
-    public static boolean sameXY(Position first, Position second) {
-//        if(first.x == second.x && first.y ==second.y){
-//            System.out.println(first.toString()+" "+second.toString());
-//        }
-        return first.x == second.x && first.y ==second.y;
-    }
-
-    public static boolean inLine(Position source, Position destination){
-        if(source.parent == ' '){
-
-            System.out.println("Critical Error: Parent somehow -1");
-            System.out.println(source);
-            System.exit(-1);
-        }
-
-        //U/D is 0/2
-        //LR is 1/3
-        if(source.parent=='e' || source.parent =='w'){//Left Right case, want different left right
-            return source.x-destination.x != 0;
-        }
-        else{
-            return source.y-destination.y != 0;
-        }
-    }
-
-    public void setParent(Position other){
-        int xDiff = this.x-other.x;
-        int yDiff = this.y-other.y;
-
-        if(yDiff == 1){
-            this.parent = 'n';
-        }
-        else if(xDiff == -1){
-            this.parent = 'e';
-        }
-        else if(yDiff == -1){
-            this.parent = 's';
-        }
-        else if(xDiff == 1){
-            this.parent = 'w';
-        }
-        else{
-            System.out.println("??? non normal diff");
-            System.exit(-1);
-        }
-    }
-
-
-    @Override
-    public int compareTo(Position o) {
-        int diff = (int) (this.value-o.value);
-        if(diff !=0){
-            return -diff;
-        }
-
-        diff = (int) (this.x-o.x);
-        if(diff!=0){
-            return diff;
-        }
-
-        diff = (int) (this.y-o.y);
-        return diff;
-    }
-
-    @Override
-    public String toString(){
-        return x+", "+y+": "+parent;
-    }
-}
 public class Code{
     static PositionPriorityQueue picked = new PositionPriorityQueue();
     static PositionPriorityQueue values = new PositionPriorityQueue();
@@ -110,7 +8,7 @@ public class Code{
     //Feed all the values into "values"
     //Keep popping off the top and removing/updating them back into values;
 
-    public static String fileName = "test2.txt";
+    public static String fileName = "input.txt";
     public static void main(String[] args) throws Exception{
         Position end = null;
         Scanner myReader = new Scanner(new File(fileName));
@@ -126,7 +24,7 @@ public class Code{
                     newPos.parent = 'w';
                 }
                 else if(chars[x] != '#'){
-                    newPos = new Position(x,y,Long.MAX_VALUE);
+                    newPos = new Position(x,y,Integer.MAX_VALUE);
                     if(chars[x] == 'E'){
                         end = newPos;
                     }
@@ -161,7 +59,7 @@ public class Code{
                 if(picked.contains(p)){
                     continue;
                 }
-                long travelWeight = pickedPos.value;
+                int travelWeight = pickedPos.value;
                 values.remove(p);
 
                 if(Position.inLine(pickedPos,p)){
@@ -281,7 +179,7 @@ public class Code{
 //                        continue;
 //                    }
                     int[] nudge = offsets[i];
-                    if(Position.sameXY(other,new Position(p.x+nudge[0],p.y+nudge[1],Long.MAX_VALUE))){
+                    if(Position.sameXY(other,new Position(p.x+nudge[0],p.y+nudge[1],Integer.MAX_VALUE))){
                         positions.add(other);
                     }
                 }
@@ -302,3 +200,106 @@ public class Code{
     }
 }
 
+class Position implements Comparable<Position>{
+    public int x;
+    public int y;
+    public int value;
+    public char parent;
+
+//    public Position(int x, int y){
+//        this.x=x;
+//        this.y=y;
+//        this.value = Long.MAX_VALUE;
+//    }
+
+    public Position(int x, int y, int value){
+        this.x=x;
+        this.y=y;
+        this.value = value;
+        this.parent = ' ';
+    }
+
+    public Position(Position other) {
+        this.x=other.x;
+        this.y=other.y;
+        this.value=other.value;
+        this.parent=other.parent;
+    }
+
+    @Override
+    public boolean equals(Object other){
+        if(other instanceof Position otherPos){
+            return this.x==otherPos.x && this.y==otherPos.y;
+        }
+        return false;
+    }
+
+    public static boolean sameXY(Position first, Position second) {
+//        if(first.x == second.x && first.y ==second.y){
+//            System.out.println(first.toString()+" "+second.toString());
+//        }
+        return first.x == second.x && first.y ==second.y;
+    }
+
+    public static boolean inLine(Position source, Position destination){
+        if(source.parent == ' '){
+
+            System.out.println("Critical Error: Parent somehow -1");
+            System.out.println(source);
+            System.exit(-1);
+        }
+
+        //U/D is 0/2
+        //LR is 1/3
+        if(source.parent=='e' || source.parent =='w'){//Left Right case, want different left right
+            return source.x-destination.x != 0;
+        }
+        else{
+            return source.y-destination.y != 0;
+        }
+    }
+
+    public void setParent(Position other){
+        int xDiff = this.x-other.x;
+        int yDiff = this.y-other.y;
+
+        if(yDiff == 1){
+            this.parent = 'n';
+        }
+        else if(xDiff == -1){
+            this.parent = 'e';
+        }
+        else if(yDiff == -1){
+            this.parent = 's';
+        }
+        else if(xDiff == 1){
+            this.parent = 'w';
+        }
+        else{
+            System.out.println("??? non normal diff");
+            System.exit(-1);
+        }
+    }
+
+
+    @Override
+    public int compareTo(Position o) {
+        int diff = (int) (this.value-o.value);
+        if(diff !=0){
+            return -diff;
+        }
+
+        diff = (int) (this.x-o.x);
+        if(diff!=0){
+            return diff;
+        }
+
+        diff = (int) (this.y-o.y);
+        return diff;
+    }
+
+    @Override
+    public String toString(){
+        return x+", "+y+": "+parent;
+    }
+}
