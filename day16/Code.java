@@ -3,12 +3,12 @@ import java.util.*;
 import java.io.*;
 
 public class Code{
-    public static String fileName = "input.txt";
+    public static String fileName = "test2.txt";
     static ArrayList<ArrayList<Position>> map = new ArrayList<>();
-
+    static Position end = null;
     public static void main(String[] args) throws Exception{
         //Data Structure
-        Position end = null;
+
 
         Scanner myReader = new Scanner(new File(fileName));
         while(myReader.hasNextLine()){
@@ -43,8 +43,6 @@ public class Code{
 
 
         while(true){
-            //System.out.println("Picked's Parent: "+picked.parent[0]+" "+picked.parent[1]);
-            //System.out.println("Picked: "+pickedIndex[0]+" "+pickedIndex[1]+": "+picked.value);
             //Update Neighbors
             int[][] directions = new int[][]{
                     {-1,0},
@@ -56,20 +54,22 @@ public class Code{
             for(int[] dir : directions){
                 Position neighbor = map.get(pickedIndex[0]+dir[0]).get(pickedIndex[1]+dir[1]);
 
-                if(neighbor == Position.WALL){
+                if(neighbor == Position.WALL ||  Math.abs(dir[0]+picked.parent[0]) == 2 || Math.abs(dir[1]+picked.parent[1]) == 2){
                     continue;
                 }
 
                 int travelValue = picked.value;
                 if(dir[0]+picked.parent[0] == 0 && dir[1]+picked.parent[1] == 0){
                     travelValue+=1;
-
                 }
                 else{
                     travelValue+=1001;
                 }
 
-
+                //edge case when two potential paths cross, and the one pre-established is bigger than the new path
+                if(neighbor.value!=Integer.MAX_VALUE){
+                    //System.out.println("!!! "+pickedIndex[0]+" "+pickedIndex[1]);
+                }
 
                 if(travelValue< neighbor.value){
                     neighbor.value = travelValue;
@@ -87,6 +87,7 @@ public class Code{
             picked = map.get(pickedIndex[0]).get(pickedIndex[1]);
         }
 
+        printThing();
         System.out.println(end.value);
         //printThing(map);
 
@@ -114,17 +115,35 @@ public class Code{
     }
 
     public static void printThing(){
+        ArrayList<ArrayList<Character>> printMap = new ArrayList<>();
         for(ArrayList<Position> row : map){
+            ArrayList<Character> printRow = new ArrayList<>();
+            printMap.add(printRow);
             for(Position p : row){
                 if(p==Position.WALL){
-                    System.out.print("#");
+                    printRow.add('#');
                 }
                 else{
-                    System.out.print(".");
+                    printRow.add('.');
                 }
+            }
+        }
+
+        int[] curr = new int[]{1,printMap.get(0).size()-2};
+        while(map.get(curr[0]).get(curr[1]).value != 0){
+            printMap.get(curr[0]).set(curr[1],'@');
+            int[] dir = map.get(curr[0]).get(curr[1]).parent;
+            curr[0]+=dir[0];
+            curr[1]+=dir[1];
+        }
+
+        for(ArrayList<Character> r : printMap){
+            for(char c : r){
+                System.out.print(c);
             }
             System.out.println();
         }
+
     }
 }
 
