@@ -8,7 +8,8 @@ public class Code{
     static Position end = null;
 
 
-    static ArrayList<int[]> equalIntersections = new ArrayList<>();
+    static ArrayList<int[]> plusIntersections = new ArrayList<>();
+    static ArrayList<int[]> equalPaths = new ArrayList<>();
     public static void main(String[] args) throws Exception{
         //Data Structure
 
@@ -77,11 +78,14 @@ public class Code{
                 int[] right= directions[(dirIndex+1)%directions.length];
                 boolean sidesClear = (map.get(neighborIndex[0]+left[0]).get(neighborIndex[1]+left[1]) != Position.WALL) && (map.get(neighborIndex[0]+right[0]).get(neighborIndex[1]+right[1]) != Position.WALL);
 
-
+                if(neighbor.picked && neighbor.value+1000 == travelValue){
+                    equalPaths.add(new int[]{neighborIndex[0],neighborIndex[1]});
+                }
 
                 //Actually though, fuck these edge cases.
                 boolean forceUpdate = false;
-                if(neighbor.picked && neighbor.value+1000>picked.value){
+
+                if(neighbor.picked && neighbor.value+1000>travelValue){
 
                     if(frontClear && !sidesClear){
                         //System.out.println("FRont edge case");
@@ -96,7 +100,7 @@ public class Code{
                     }
                     else{
                         System.out.println("Bad!!!"+ (neighborIndex[0])+" "+(neighborIndex[1]));
-                        //plusIntersections.add(new int[]{neighborIndex[0],neighborIndex[1]});
+                        plusIntersections.add(new int[]{neighborIndex[0],neighborIndex[1]});
                     }
                 }
 
@@ -169,9 +173,9 @@ public class Code{
             curr[1]+=dir[1];
         }
 
-//        for(int[] plus : plusIntersections){
-//            printMap.get(plus[0]).set(plus[1],'+');
-//        }
+        for(int[] plus : equalPaths){
+            printMap.get(plus[0]).set(plus[1],'+');
+        }
 
         for(ArrayList<Character> r : printMap){
             for(char c : r){
