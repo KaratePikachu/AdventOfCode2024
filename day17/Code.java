@@ -3,7 +3,7 @@ import java.util.*;
 import java.io.*;
 
 public class Code{
-    public static String fileName = "test.txt";
+    public static String fileName = "input.txt";
 
 
     static int instructionPointer = 0;
@@ -11,21 +11,38 @@ public class Code{
     static int registerB;
     static int registerC;
 
+    static String expectedResult = "0,3,5,4,3,0,";
+
+    static String result = "";
+
     public static void main(String[] args) throws Exception{
+        for(int i=0; i<1000000; i++){
+            registerA = i;
+            registerB = 0;
+            registerC = 0;
+            program();
+        }
+    }
+
+    public static void program() throws FileNotFoundException {
         //Data Structure
         ArrayList<Integer> instructions = new ArrayList<>();
 
         Scanner myReader = new Scanner(new File(fileName));
-        registerA = Integer.parseInt(myReader.nextLine().split(" ")[2]);
-        registerB = Integer.parseInt(myReader.nextLine().split(" ")[2]);
-        registerC = Integer.parseInt(myReader.nextLine().split(" ")[2]);
-
+        //registerA = Integer.parseInt(myReader.nextLine().split(" ")[2]);
+        //registerB = Integer.parseInt(myReader.nextLine().split(" ")[2]);
+        //registerC = Integer.parseInt(myReader.nextLine().split(" ")[2]);
+        myReader.nextLine();
+        myReader.nextLine();
+        myReader.nextLine();
         myReader.nextLine();
 
         String[] nums = myReader.nextLine().split("[ ,]");
         for(int i=1; i<nums.length; i++){
             instructions.add(Integer.parseInt(nums[i]));
         }
+
+
 
 
         while(instructionPointer<instructions.size()){
@@ -71,12 +88,13 @@ public class Code{
         //System.out.println(registerB);
     }
 
+    //goal, restore register A1.
     private static void adv(int literalOperand) {
         int comboOperand = toCombo(literalOperand);
-        double div = (double)registerA/Math.pow(2,comboOperand);
-        registerA = (int)div;
+        registerA = registerA/(int)Math.pow(2,comboOperand);
     }
 
+    //
     private static void bxl(int literalOperand) {
         registerB ^= literalOperand;
     }
@@ -94,6 +112,7 @@ public class Code{
         instructionPointer = literalOperand-2;
     }
 
+    //Need to restore register B
     private static void bxc(int literalOperand) {
         registerB ^= registerC;
     }
@@ -106,14 +125,12 @@ public class Code{
 
     private static void bdv(int literalOperand) {
         int comboOperand = toCombo(literalOperand);
-        double div = registerA/Math.pow(2,comboOperand);
-        registerB = (int)div;
+        registerB = registerB/(int)Math.pow(2,comboOperand);
     }
 
     private static void cdv(int literalOperand) {
         int comboOperand = toCombo(literalOperand);
-        double div = registerA/Math.pow(2,comboOperand);
-        registerC = (int)div;
+        registerC = registerC/(int)Math.pow(2,comboOperand);
     }
 
     private static int toCombo(int literalOperand){

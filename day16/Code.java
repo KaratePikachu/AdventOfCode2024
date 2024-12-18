@@ -3,9 +3,12 @@ import java.util.*;
 import java.io.*;
 
 public class Code{
-    public static String fileName = "test2.txt";
+    public static String fileName = "input.txt";
     static ArrayList<ArrayList<Position>> map = new ArrayList<>();
     static Position end = null;
+
+
+    static ArrayList<int[]> equalIntersections = new ArrayList<>();
     public static void main(String[] args) throws Exception{
         //Data Structure
 
@@ -51,8 +54,10 @@ public class Code{
                     {0,-1}
             };
 
-            for(int[] dir : directions){
-                Position neighbor = map.get(pickedIndex[0]+dir[0]).get(pickedIndex[1]+dir[1]);
+            for(int dirIndex = 0; dirIndex<directions.length; dirIndex++){
+                int[] dir = directions[dirIndex];
+                int[] neighborIndex = new int[]{pickedIndex[0]+dir[0], pickedIndex[1]+dir[1]};
+                Position neighbor = map.get(neighborIndex[0]).get(neighborIndex[1]);
 
                 if(neighbor == Position.WALL ||  Math.abs(dir[0]+picked.parent[0]) == 2 || Math.abs(dir[1]+picked.parent[1]) == 2){
                     continue;
@@ -66,13 +71,40 @@ public class Code{
                     travelValue+=1001;
                 }
 
-                //edge case when two potential paths cross, and the one pre-established is bigger than the new path
-                if(neighbor.value!=Integer.MAX_VALUE){
-                    //System.out.println("!!! "+pickedIndex[0]+" "+pickedIndex[1]);
+                boolean frontClear = map.get(neighborIndex[0]+dir[0]).get(neighborIndex[1]+dir[1]) != Position.WALL;
+                //Check if both sides are clear
+                int[] left= directions[dirIndex == 0 ? 3 : dirIndex-1];
+                int[] right= directions[(dirIndex+1)%directions.length];
+                boolean sidesClear = (map.get(neighborIndex[0]+left[0]).get(neighborIndex[1]+left[1]) != Position.WALL) && (map.get(neighborIndex[0]+right[0]).get(neighborIndex[1]+right[1]) != Position.WALL);
+
+
+
+                //Actually though, fuck these edge cases.
+                boolean forceUpdate = false;
+                if(neighbor.picked && neighbor.value+1000>picked.value){
+
+                    if(frontClear && !sidesClear){
+                        //System.out.println("FRont edge case");
+                        map.get(neighborIndex[0]+dir[0]).get(neighborIndex[1]+dir[1]).value = travelValue+1;
+                        forceUpdate = true;
+                    }
+                    else if(sidesClear && !frontClear){
+                        //System.out.println("Side edge case");
+                    }
+                    else if(!sidesClear && !frontClear){
+
+                    }
+                    else{
+                        System.out.println("Bad!!!"+ (neighborIndex[0])+" "+(neighborIndex[1]));
+                        //plusIntersections.add(new int[]{neighborIndex[0],neighborIndex[1]});
+                    }
                 }
 
-                if(travelValue< neighbor.value){
+
+                if(travelValue< neighbor.value || forceUpdate){
+
                     neighbor.value = travelValue;
+
                     //System.out.println((pickedIndex[0]+dir[0])+", "+(pickedIndex[1]+dir[1])+": "+neighbor.value);
                     neighbor.parent = new int[]{-dir[0],-dir[1]};
                 }
@@ -131,11 +163,15 @@ public class Code{
 
         int[] curr = new int[]{1,printMap.get(0).size()-2};
         while(map.get(curr[0]).get(curr[1]).value != 0){
-            printMap.get(curr[0]).set(curr[1],'@');
+            printMap.get(curr[0]).set(curr[1],'0');
             int[] dir = map.get(curr[0]).get(curr[1]).parent;
             curr[0]+=dir[0];
             curr[1]+=dir[1];
         }
+
+//        for(int[] plus : plusIntersections){
+//            printMap.get(plus[0]).set(plus[1],'+');
+//        }
 
         for(ArrayList<Character> r : printMap){
             for(char c : r){
