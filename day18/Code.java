@@ -31,8 +31,12 @@ public class Code{
             }
         }
 
+        int[] finalRock = rocks.get(2914);
+        System.out.println(finalRock[1]+" "+finalRock[0]);
+        System.exit(0);
 
-        for(int i=0; i<1024; i++){
+
+        for(int i=0; i<2915; i++){
             int[] rock = rocks.get(i);
             map.get(rock[0]).set(rock[1],Position.WALL);
         }
