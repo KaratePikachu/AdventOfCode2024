@@ -3,7 +3,7 @@ import java.util.*;
 import java.io.*;
 
 public class Code{
-    public static String fileName = "input.txt";
+    public static String fileName = "test.txt";
 
 
     static int instructionPointer = 0;
@@ -34,13 +34,13 @@ public class Code{
 
 
 
-        int numOperations = 0;
+        //int numOperations = 0;
         while(instructionPointer<instructions.size()){
-            numOperations++;
-            System.out.println("--------Operation "+numOperations+"--------");
+            //numOperations++;
+            //System.out.println("--------Operation "+numOperations+"--------");
             int opCode = instructions.get(instructionPointer);
             int literalOperand = instructions.get(instructionPointer+1);
-            System.out.println("f("+opCode+"), "+literalOperand);
+            //System.out.println("f("+opCode+"), "+literalOperand);
 
             switch(opCode){
                 case 0:
@@ -84,20 +84,20 @@ public class Code{
     //goal, restore register A1.
     private static void adv(int literalOperand) {
         int comboOperand = toCombo(literalOperand);
-        System.out.println("registerA = registerA/(int)Math.pow(2,"+comboOperand+");");
+        //System.out.println("registerA = registerA/(int)Math.pow(2,"+comboOperand+");");
         registerA = registerA/(int)Math.pow(2,comboOperand);
     }
 
     //
     private static void bxl(int literalOperand) {
-        System.out.println("registerB ^= "+literalOperand);
+        //System.out.println("registerB ^= "+literalOperand);
         registerB ^= literalOperand;
     }
 
     private static void bst(int literalOperand) {
 
         int comboOperand = toCombo(literalOperand);
-        System.out.println("registerB = "+comboOperand+" % 8;");
+        //System.out.println("registerB = "+comboOperand+" % 8;");
         registerB = comboOperand % 8;
     }
 
@@ -105,32 +105,32 @@ public class Code{
         if(registerA == 0){
             return;
         }
-        System.out.println("Jump to start");
-        System.exit(0);
+        //System.out.println("Jump to start");
+        //System.exit(0);
         instructionPointer = literalOperand-2;
     }
 
     //Need to restore register B
     private static void bxc(int literalOperand) {
-        System.out.println("registerB ^= registerC;");
+        //System.out.println("registerB ^= registerC;");
         registerB ^= registerC;
     }
 
     private static void out(int literalOperand) {
         int comboOperand = toCombo(literalOperand);
         int val = comboOperand%8;
-        System.out.println("Outputting: "+comboOperand+" as "+val+",");
+        System.out.print(val+",");
     }
 
     private static void bdv(int literalOperand) {
         int comboOperand = toCombo(literalOperand);
-        System.out.println("registerB = registerB/(int)Math.pow(2,"+comboOperand+");");
+        //System.out.println("registerB = registerB/(int)Math.pow(2,"+comboOperand+");");
         registerB = registerB/(int)Math.pow(2,comboOperand);
     }
 
     private static void cdv(int literalOperand) {
         int comboOperand = toCombo(literalOperand);
-        System.out.println("registerC = registerC/(int)Math.pow(2,"+comboOperand+");");
+        //System.out.println("registerC = registerC/(int)Math.pow(2,"+comboOperand+");");
         registerC = registerC/(int)Math.pow(2,comboOperand);
     }
 
