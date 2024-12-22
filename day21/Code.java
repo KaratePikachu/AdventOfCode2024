@@ -76,7 +76,7 @@ public class Code{
                     inputs.add(Integer.parseInt(""+c));
                 }
             }
-            //print(inputs);
+            print(inputs);
             prime(inputs,queue);
             Position pos = new Position(2,3);//Keypad A
             //numpad
