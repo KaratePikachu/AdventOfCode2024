@@ -20,9 +20,39 @@ public class Code{
     final static int DOWN = 13;
     final static int LEFT = 14;
 
+    final static int CACHESTART = 20;
+    static int CACHEID = 0;
+
 
     static HashMap<Integer,Position> numPad;
     static HashMap<Integer,Position> keyPad;
+
+    static TreeMap<Integer,Integer> cacheTransfer = new TreeMap<>();
+    static TreeMap<Integer,ArrayList<Integer>> cacheValues = new TreeMap<>();
+    static TreeMap<ArrayList<Integer>,Integer> cacheIDs = new TreeMap<>(new CustomComparator());
+
+    static class CustomComparator implements Comparator<ArrayList<Integer>> {
+        @Override
+        public int compare(ArrayList<Integer> o1, ArrayList<Integer> o2) {
+
+            if(o1.size()<o2.size()){
+                return -1;
+            }
+            else if(o1.size()>o2.size()){
+                return 1;
+            }
+
+            for(int i=0; i<o1.size(); i++){
+                if(o1.get(i)<o2.get(i)){
+                    return -1;
+                }
+                else if(o1.get(i)>o2.get(i)){
+                    return 1;
+                }
+            }
+            return 0;
+        }
+    }
 
     public static HashMap<Integer,Position> createNumPad(){
         HashMap<Integer,Position> curr = new HashMap<>();
@@ -62,6 +92,9 @@ public class Code{
         numPad = createNumPad();
         keyPad = createKeyPad();
 
+
+
+
         Scanner myReader = new Scanner(new File(fileName));
         long result = 0;
         while(myReader.hasNextLine()){
@@ -76,37 +109,57 @@ public class Code{
                     inputs.add(Integer.parseInt(""+c));
                 }
             }
-            print(inputs);
+            //print(inputs);
             prime(inputs,queue);
             Position pos = new Position(2,3);//Keypad A
             //numpad
-            for(int val : queue){
-                Position newPos = numPad.get(val);
-                int xDiff = newPos.x-pos.x;
-                int yDiff = newPos.y-pos.y;
-                addDirs(inputs,pos,xDiff,yDiff,"numPad");
-                pos = newPos;
-            }
-            //print(inputs);
-            //keypad
-            for(int rep = 0; rep<2; rep++){
-                prime(inputs,queue);
-                pos = new Position(2,0);//Keypad A
-                for(int val : queue){
-                    Position newPos = keyPad.get(val);
+
+            for(int input : inputs){
+                while(!queue.isEmpty()){
+                    int val = queue.removeFirst();
+                    Position newPos = numPad.get(val);
                     int xDiff = newPos.x-pos.x;
                     int yDiff = newPos.y-pos.y;
-                    addDirs(inputs,pos,xDiff,yDiff,"keyPad");
+                    addDirs(inputs,pos,xDiff,yDiff,"numPad");
                     pos = newPos;
                 }
-                print(inputs);
+
+
+
             }
+//            while(!queue.isEmpty()){
+//                int val = queue.removeFirst();
+//                Position newPos = numPad.get(val);
+//                int xDiff = newPos.x-pos.x;
+//                int yDiff = newPos.y-pos.y;
+//                addDirs(inputs,pos,xDiff,yDiff,"numPad");
+//                pos = newPos;
+//            }
+//            //print(inputs);
+//            //keypad
+//            for(int rep = 0; rep<25; rep++){
+//                prime(inputs,queue);
+//                pos = new Position(2,0);//Keypad A
+//                while(!queue.isEmpty()){
+//                    int val = queue.removeFirst();
+//                    Position newPos = keyPad.get(val);
+//                    int xDiff = newPos.x-pos.x;
+//                    int yDiff = newPos.y-pos.y;
+//                    addDirs(inputs,pos,xDiff,yDiff,"keyPad");
+//                    pos = newPos;
+//                }
+//                System.out.println(inputs.size());
+//                System.out.println(rep);
+//            }
+
+
 
 
 
 
             //System.out.println(inputs.size());
             //System.out.println(inputs.size()*Integer.parseInt(nextLine.split("A")[0]));
+            //System.out.println(inputs.size()+"*"+Long.parseLong(nextLine.split("A")[0]));
             result+=inputs.size()*Long.parseLong(nextLine.split("A")[0]);
         }
 
@@ -148,6 +201,10 @@ public class Code{
                 inputs.add(LEFT);
                 xDiff++;
             }
+            while(yDiff>0){
+                inputs.add(DOWN);
+                yDiff--;
+            }
             while(xDiff>0){//Right
                 inputs.add(RIGHT);
                 xDiff--;
@@ -156,29 +213,27 @@ public class Code{
                 inputs.add(UP);
                 yDiff++;
             }
-            while(yDiff>0){
-                inputs.add(DOWN);
-                yDiff--;
-            }
+
 
         }
         else if(mode.equals("keyPad")){
-            while(xDiff>0){//Right
-                inputs.add(RIGHT);
-                xDiff--;
-            }
-            while(yDiff<0){
-                inputs.add(UP);
-                yDiff++;
-            }
-            while(yDiff>0){
-                inputs.add(DOWN);
-                yDiff--;
-            }
             while(xDiff<0){
                 inputs.add(LEFT);
                 xDiff++;
             }
+            while(yDiff>0){
+                inputs.add(DOWN);
+                yDiff--;
+            }
+            while(xDiff>0){//Right
+                inputs.add(RIGHT);
+                xDiff--;
+            }
+            while(yDiff<0){
+                inputs.add(UP);
+                yDiff++;
+            }
+
         }
 
 
